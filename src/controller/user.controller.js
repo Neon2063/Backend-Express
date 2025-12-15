@@ -15,7 +15,6 @@ const registerUser = asyncHandler(
                 message : "empty string"
             })
         }
-
         // checking formattinf of email to do
 
         // find if user exist already or not 
@@ -30,18 +29,6 @@ const registerUser = asyncHandler(
                 message:"already a user "
             })
         }
-
-        // check password 
-        const passwordCorrect = await User.isPasswordCorrect(password)
-        if(!passwordCorrect){
-            return res.status(400).json({
-                success:false,
-                message:"not correct password"
-            })
-        }
-
-
-
         // creating user 
         const user = await User.create({
             username:username.trim().toLowerCase(),
@@ -56,23 +43,11 @@ const registerUser = asyncHandler(
             })
         }
 
-
         return res.status(201).json({
             success:true,
             message:"User created succesfully",
             Userdata: user
         })
-
-
-
-
-
-
-
-        
-
-
-
     }
 )
 
