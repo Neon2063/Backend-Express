@@ -30,7 +30,9 @@ import userRouter from "./routes/user.routes.js"
 
 
 //route declerations
-app.use("/api/v1/users",userRouter)
+app.use("/api/v1/",userRouter)
+//intial route domain
+
 
 
 

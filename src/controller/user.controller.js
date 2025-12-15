@@ -1,6 +1,79 @@
-import { asyncHandler } from "../utils/asynchandler.js";
+import { asyncHandler } from "../utils/asynchandler.js"
+import { User } from "../models/user.model.js"
+
+const registerUser = asyncHandler(
+    async (req,res) =>{
+        // input data
+        const {username, email , fullname , password} = req.body
+
+        // check validation and trim it 
+        if( !username?.trim() ||
+            !email?.trim() ||
+            !fullname?.trim() ||
+            !password?.trim() ){
+            return res.status(400).json({
+                message : "empty string"
+            })
+        }
+
+        // checking formattinf of email to do
+
+        // find if user exist already or not 
+        const alreadyUser = await User.findOne({
+         $or: [{username: username } ,
+             {email : email}
+            ]})
+
+        if(alreadyUser){
+            return res.status(400).json({
+                 success:false,
+                message:"already a user "
+            })
+        }
+
+        // check password 
+        const passwordCorrect = await User.isPasswordCorrect(password)
+        if(!passwordCorrect){
+            return res.status(400).json({
+                success:false,
+                message:"not correct password"
+            })
+        }
 
 
 
+        // creating user 
+        const user = await User.create({
+            username:username.trim().toLowerCase(),
+            email : email.trim().toLowerCase(),
+            password : password
+        })
+
+        if(!user){
+            return res.status(400).json({
+                success:false,
+                message:"failed to create user "
+            })
+        }
+
+
+        return res.status(201).json({
+            success:true,
+            message:"User created succesfully",
+            Userdata: user
+        })
+
+
+
+
+
+
+
+        
+
+
+
+    }
+)
 
 export {registerUser}

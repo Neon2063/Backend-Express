@@ -46,4 +46,20 @@ const userSchema = new Schema({
 
 },{timestamps:true})
 
+// hooks that save incrypted password 
+userSchema.pre("save", async function (){
+    if(!this.isModified("password")) return ; 
+    this.password= await bcrypt.hash(this.password,10)
+})
+
+
+// compare password
+userSchema.methods.isPasswordCorrect = async function(password){
+    return await bcrypt.compare(password , this.password)
+}
+
+
+// refresh tokens and acces tokes
+
+
 export const User = mongoose.model("User", userSchema)
