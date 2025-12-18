@@ -80,6 +80,22 @@ const registerUser = asyncHandler(
     }
 )
 
+const refreshAndAccesTokenGenerator = async (userid)=>{
+  try {
+      const user = await User.findById(userid)
+      const refreshToken = user.refreshTokenGenerator()
+      const accesToken = user.accessTokenGenerator()
+      user.refreshToken = refreshToken
+      await user.save({validateBeforeSave : false})
+
+      return { refreshToken ,accesToken}
+    
+  } catch (error) {
+    console.log(error,"Error in generating tokens")
+    
+  }
+}
+
 const loginUser = asyncHandler(
      async (req, res) => {
       const {username , password} = req.body
@@ -92,11 +108,11 @@ const loginUser = asyncHandler(
       }
 
       // checking user 
-      const userExist = await User.findOne({
+      const user = await User.findOne({
         username:username
       })
 
-      if(!userExist){
+      if(!user){
         return res.status(401).json({
             message:"No user found ",
             success:false
@@ -113,8 +129,22 @@ const loginUser = asyncHandler(
       }
 
       // accestoken and refreshtoken
+       const {refreshToken , accessToken }=refreshAndAccesTokenGenerator(user._id);
 
-      return res.status(201).json({
+
+       const loggedUser = User.findOne(user._id).select(
+        "-password"
+       )
+
+       const option = {
+        httpOnly:true,
+        secure:true
+       }
+
+      return res.status(201)
+      .cookie("accesstoke",accessToken,option)
+      .cookie("refreshtoken", refreshToken , option)
+      .json({
         message:"login succesful",
         success:true
       })
