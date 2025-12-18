@@ -1,5 +1,6 @@
 import { asyncHandler } from "../utils/asynchandler.js"
 import { User } from "../models/user.model.js"
+import {uploadToCloudinary} from "../service/cloudnary.service.js"
 
 const registerUser = asyncHandler(
     async (req,res) =>{
@@ -29,19 +30,42 @@ const registerUser = asyncHandler(
                 message:"already a user "
             })
         }
+        // avater and cover image 
+
+          const avater = req.files?.avatar[0]?.path
+          const coverimage = req.files?.coverimage[0]?.path
+
+
+         const uploadedAvater = await uploadToCloudinary(avater)
+         const UploadedCoverimage = await uploadToCloudinary(coverimage)
+
+
+         if(!uploadToCloudinary){
+            return res.status(400).json({
+                success:"false",
+                message:"failed to upload"
+            })
+         }
+
         // creating user 
         const user = await User.create({
+            fullname:fullname,
             username:username.trim().toLowerCase(),
-            email : email.trim().toLowerCase(),
+            avater:uploadedAvater.url,
+            coverimage:UploadedCoverimage?.url || "",
+            email : email,
             password : password
         })
 
-        if(!user){
+        const createdUser =  await User.findById(user._id)
+        if(!createdUser){
             return res.status(400).json({
-                success:false,
-                message:"failed to create user "
+                message:"error in creating database",
+                success:fale
             })
         }
+
+
 
         return res.status(201).json({
             success:true,

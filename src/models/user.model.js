@@ -23,24 +23,24 @@ const userSchema = new Schema({
         lowercase:true,
         trim:true,
     },
-    avatar:{          // FIXED: avater -> avatar
+    avatar:{          
         type:String,
         required:true,
     },
-    coverImage:{      // camelCase
+    coverImage:{      
         type:String,
     },
     password:{
         type:String,
         required:true,    
     },
-    watchHistory:[    // camelCase
+    watchHistory:[    
         {
             type: Schema.Types.ObjectId,
-            ref: "Video"    // FIXED: Vedio -> Video
+            ref: "Video"   
         }
     ],
-    refreshToken:{     // camelCase
+    refreshToken:{     
         type:String
     }
 
