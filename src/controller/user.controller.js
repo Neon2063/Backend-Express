@@ -57,7 +57,9 @@ const registerUser = asyncHandler(
             password : password
         })
 
-        const createdUser =  await User.findById(user._id)
+        const createdUser =  await User.findById(user._id).select(
+            "-password -refreshToken"
+        )
         if(!createdUser){
             return res.status(400).json({
                 message:"error in creating database",
