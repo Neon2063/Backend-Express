@@ -8,7 +8,7 @@ const DataBase = async ()=>{
       console.log(` Connected to mongo db ${connectionInstance.connection.host}`)
         
     } catch (error) {
-        console.log("ERROR IN CONNECTION ",error);
+        console.log("ERROR IN CONNECTION IN DATABASE ",error);
         process.exit(1)
         
     }

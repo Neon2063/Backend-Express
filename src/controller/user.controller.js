@@ -51,4 +51,48 @@ const registerUser = asyncHandler(
     }
 )
 
-export {registerUser}
+const loginUser = asyncHandler(
+     async (req, res) => {
+      const {username , password} = req.body
+      // validating feild
+      if(!username?.trim() || !password?.trim()){
+         return res.status(401).json({
+            success:false,
+            message:"Empty feild"
+        })
+      }
+
+      // checking user 
+      const userExist = await User.findOne({
+        username:username
+      })
+
+      if(!userExist){
+        return res.status(401).json({
+            message:"No user found ",
+            success:false
+        })
+      }
+      // check password correct or not
+      const userPasswordIsCorrect =  User.isPasswordCorrect(password);
+
+      if(!userPasswordIsCorrect){
+        res.status(401).json({
+            message:"Invalid credentials",
+            success:false
+        })
+      }
+
+      // accestoken and refreshtoken
+
+      return res.status(201).json({
+        message:"login succesful",
+        success:true
+      })
+
+
+
+     }
+)
+
+export {registerUser,loginUser}
